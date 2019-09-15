@@ -1,0 +1,28 @@
+<html>
+	<body>
+		<div class="container">
+		
+			
+				Open:{{key1}}
+				
+				High: {{key2}}
+
+				Low: {{key3}}
+
+				Close: {{key4}}
+				
+				
+				Predicted value:  {{value}}
+		
+			<form action = "/process" method = "POST">
+				<div class="form-group">
+					<input type="text" name="open" class="form-control">
+					<input type="text" name="high" class="form-control">
+					<input type="text" name="low" class="form-control">
+					<input type="text" name="close" class="form-control">
+					<button type="submit" class="btn btn-primary">Send
+					</button>
+			</form>
+		</div>
+	</body>
+</html> 

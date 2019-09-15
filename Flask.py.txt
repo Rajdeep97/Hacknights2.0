@@ -1,0 +1,60 @@
+from flask import Flask, render_template, request, redirect
+from flask import session
+import pandas as pd
+import json
+import numpy as np
+import datetime
+from keras.models import model_from_json
+import tensorflow as tf
+from keras import backend as K
+app = Flask(__name__)
+
+
+@app.route('/home')
+def web():
+	return render_template("web_test.html")
+
+@app.route('/process',methods=['GET','POST'])
+def process():
+	K.clear_session()
+	data = pd.DataFrame(columns=["Open","High","Low","Close","Volume"])
+	open1 = []
+	high1 = []
+	low1 = []
+	close1 = []
+	volume1 = []
+	json_file = open('model_save.json', 'r')
+	loaded_model_json = json_file.read()
+	json_file.close()
+	model = model_from_json(loaded_model_json)
+	model.load_weights('model_save.h5')
+	open12=request.form['open']
+	high12 =request.form['high']
+	low12 =request.form['low']
+	close12 =request.form['close']
+	volume12 =request.form['volume']
+	open12=int(open12)
+	high12=int(high12)
+	low12=int(low12)
+	close12=int(close12)
+	volume12=int(volume12)
+	open1.append(open12)
+	high1.append(high12)
+	low1.append(low12)
+	close1.append(close12)
+	volume1.append(volume12)
+	data["Open"]=open1
+	data["High"]=high1
+	data["Low"]=low1
+	data["Close"]=close1
+	data["Volume"]=volume1
+	print(data)
+	data = np.array(data)
+	data = np.reshape(data,(data.shape[0],5,1))
+	closing_price = model.predict(data)
+	print(closing_price)
+	K.clear_session()
+	return render_template("web_test.html",key1=open12,key2=high12,key3=low12,key4=close12,key5=volume12,value=closing_price)
+
+if __name__ == '__main__':
+	app.run(debug=True,port=5000)
